@@ -1,59 +1,50 @@
-
 // Importa Express
 const express = require('express');
 const cors = require('cors');
-const axios = require('axios');
-const token = require('./tokenMarco.js');
+const bodyParser = require('body-parser');
 
+const token = require('./tokenMarco.js');
+const request = require('./requestAPI.js');
+
+let token_marco = null;
 
 // Crea una instancia de Express
 const app = express();
-const port = 3500; // Puerto en el que se ejecutará el servidor
 
+app.use(bodyParser.json());
+const port = 3500; // Puerto en el que se ejecutará el servidor
 
 app.use(cors());
 
+app.all('*', async (req, res) => {
 
+    const requestedPath = req.originalUrl;
+    const requestedMethod = req.method;
+    const requestBody = req.body;    
+    
 
-// Definir una ruta de ejemplo
-app.get('/token', async (req, res) => {
-    try {
+    if (token_marco == null) {
+        const tokenERP = await token();
 
-        const data = await token();
-
-
-
-        res.send(data);
-    } catch (error) {
-        res.status(500).json({ error: 'Error al obtener los datos' });
+        token_marco = tokenERP.token.access_token;
     }
+
+
+    if(requestedPath=='/token'){
+        res.send(token_marco);
+
+        return;
+    }
+    
+    const response = await request({ type: requestedMethod, metodo: requestedPath, data: requestBody }, token_marco)
+
+    console.log(token_marco);
+
+    res.send(response);
+
+
 });
 
-
-
-// Definir una ruta de ejemplo
-app.get('/', async (req, res) => {
-    try {
-     
-
-        res.send(req);
-    } catch (error) {
-        res.status(500).json({ error: 'Error al obtener los datos' });
-    }
-});
-
-// Definir una ruta de ejemplo
-app.post('/', async (req, res) => {
-    try {
-        const data = await token();
-
-
-
-        res.send(data);
-    } catch (error) {
-        res.status(500).json({ error: 'Error al obtener los datos' });
-    }
-});
 
 // Inicia el servidor
 app.listen(port, () => {

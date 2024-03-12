@@ -1,3 +1,4 @@
+
 // variable que almacena el pretoken
 let _pretoken = {};
 // variable que almacena las empresas disponibles en el ambiente
