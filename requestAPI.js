@@ -1,8 +1,10 @@
-const axios = require('axios');
+import axios from "axios";
+
+
 
 const URLBase = "http://localhost/sinco/v3/adpro/api";
 
-async function requestAPI(request, token) {
+export async function requestAPI(request, token) {
 
 
 
@@ -71,5 +73,3 @@ async function requestAPI(request, token) {
 
 
 }
-
-module.exports = requestAPI;

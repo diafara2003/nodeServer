@@ -13,7 +13,7 @@ let _raiz = `http://localhost/sinco/v3`;
 
 
 
- const fetchData = async () => {
+ export const fetchData = async () => {
     try {
         let data_auth = { NomUsuario: "provportal", ClaveUsuario: "+m8RuYOMNLGR1yvw0V+dJsTFuQT1BkUkNKXCSBQ6U9fZnRyTpsdg/YjlGFkDQGpIl7IctbC5LMPUexnG/hmkTVmEWC1+9gIR+iD8HqhBKUEgI0oOoJ+cetKxI+38rb57Apr6CfaAhLxFXdR+/fz1A414hEQ5zPCvxDqeLA/8gtHReMdqFxXNxu6j1i3DASDtrVMgMrOz3p0vDP4/Kqa79cOQSOFQrTq5Zjf0UYQRKqjyqz+7Up9Ghk6IIbYLXq8gz4cwrRVB81Iwx/NBNdAZ57ttM4JkkDCIk6b5Dfc0x7Q=6" };
 
@@ -57,5 +57,3 @@ async function Peticiones(url, type, data, reqPre, reqToken) {
     const result = request.json();
     return result;
 }
-
-module.exports = fetchData;

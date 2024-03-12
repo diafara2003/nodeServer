@@ -1,10 +1,11 @@
 // Importa Express
-const express = require('express');
-const cors = require('cors');
-const bodyParser = require('body-parser');
+import express from 'express';
+import bodyParser from 'body-parser';
+import cors from 'cors';
 
-const token = require('./tokenMarco.js');
-const request = require('./requestAPI.js');
+import { fetchData } from './tokenMarco.js'
+import { requestAPI } from './requestAPI.js'
+
 
 let token_marco = null;
 
@@ -20,25 +21,24 @@ app.all('*', async (req, res) => {
 
     const requestedPath = req.originalUrl;
     const requestedMethod = req.method;
-    const requestBody = req.body;    
-    
+    const requestBody = req.body;
+
 
     if (token_marco == null) {
-        const tokenERP = await token();
+        const tokenERP = await fetchData();
 
         token_marco = tokenERP.token.access_token;
     }
 
 
-    if(requestedPath=='/token'){
+    if (requestedPath == '/token') {
         res.send(token_marco);
 
         return;
     }
-    
-    const response = await request({ type: requestedMethod, metodo: requestedPath, data: requestBody }, token_marco)
 
-    console.log(token_marco);
+    const response = await requestAPI({ type: requestedMethod, metodo: requestedPath, data: requestBody }, token_marco)
+
 
     res.send(response);
 
