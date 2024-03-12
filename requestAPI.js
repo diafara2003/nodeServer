@@ -4,6 +4,17 @@ import axios from "axios";
 
 const URLBase = "http://localhost/sinco/v3/adpro/api";
 
+
+const _http = axios.create({
+    headers: {
+        Accept: "application/json",
+        'Content-Type': 'application/json',
+
+        Authorization: `Bearer ${token}`
+    },
+    baseURL: URLBase
+});
+
 export async function requestAPI(request, token) {
 
 
@@ -12,15 +23,6 @@ export async function requestAPI(request, token) {
     if (request.isformData == null) request.isformData = false;
 
 
-    const _http = axios.create({
-        headers: {
-            Accept: "application/json",
-            'Content-Type': 'application/json',
-
-            Authorization: `Bearer ${token}`
-        },
-        baseURL: URLBase
-    });
 
     let response = null;
 
