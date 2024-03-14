@@ -1,10 +1,7 @@
-const axios = require('axios');
+import axios from "axios";
+import { envs } from "./config/envs";
 
-const URLBase = "http://localhost/sinco/v3/adpro/api";
-
-async function requestAPI(request, token) {
-
-
+export async function requestAPI(request:any, token:string) {
 
     if (request.AllowAnonymous == null) request.AllowAnonymous = false;
     if (request.isformData == null) request.isformData = false;
@@ -17,7 +14,7 @@ async function requestAPI(request, token) {
 
             Authorization: `Bearer ${token}`
         },
-        baseURL: URLBase
+        baseURL: envs.URL__BASE_API
     });
 
     let response = null;
@@ -71,5 +68,3 @@ async function requestAPI(request, token) {
 
 
 }
-
-module.exports = requestAPI;
