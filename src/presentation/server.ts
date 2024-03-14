@@ -34,18 +34,9 @@ export class Server{
         this.app.use(cors());
 
         const auth = new Auth();
-        const tokenMiddleware = async (req: Request, res: Response, next: NextFunction) => {
-            const tokenValid = await auth.validarToken();
-            console.log(tokenValid);
-            if (!tokenValid) {
-                await auth.generarToken();
-            }
-            req.headers.authorization = auth.tokenMarco?.access_token; // Pasar el token a través del objeto de solicitud
-            next();
-        };
 
-        this.app.use(tokenMiddleware);
-        
+        this.app.use(auth.validarToken);
+
         // //*Routes
         this.app.use(this.routes);
        

@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { generarToken } from "../../tokenMarco";
 import { requestAPI } from "../../requestAPI";
 
 
