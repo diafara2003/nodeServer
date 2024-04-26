@@ -28,6 +28,8 @@ export async function requestAPI(request: RequestOptions, token: string): Promis
 
     let response: AxiosResponse | null = null;
 
+
+
     try {
         switch (request.type) {
             case "GET":
@@ -44,31 +46,20 @@ export async function requestAPI(request: RequestOptions, token: string): Promis
                         response = await _http.post(request.metodo, JSON.stringify(request.data));
                 }
                 break;
-                case "PUT":
-                    if (request.data != null) {
-                      if (request.isformData)
+            case "PUT":
+                if (request.data != null) {
+                    if (request.isformData)
                         response = await _http.put(request.metodo, request.data);
-                      else
-                        response = await _http.put(
-                          request.metodo,
-                          JSON.stringify(request.data)
-                        );
-                    }
-                    break;
+                    else
+                        response = await _http.put(request.metodo, JSON.stringify(request.data));
+                }
+                break;
         }
-        ;
-
-     
-   
-  } catch (error) {
-    console.log(error);
-    return {};
-
-  }
-
-  if (response != null) {
-    return response.data;
-  } else {
-    return {};
-  }
+    } catch (error) {
+        console.log(error);
+        response = null;
+    }
+    //console.log(response)
+    if (response != null) return response; 
+    else { return {}; }
 }
