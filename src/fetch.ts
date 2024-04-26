@@ -2,6 +2,17 @@
 
 export type TypeApi = 'GET' | 'POST' | 'DELETE' | 'PUT';
 
+
+function esJSON(cadena: string): boolean {
+    try {
+        JSON.parse(cadena);
+        return true;
+    } catch (error) {
+        return false;
+    }
+}
+
+
 export async function Peticiones (
         url:string, 
         type:TypeApi, 
@@ -26,9 +37,8 @@ export async function Peticiones (
 
     // Serializacion de parametros necesarios para el metodo a llamar , se hace siempre y cuando sea diferente de undefined
     if (data != undefined) _headers.body = JSON.stringify(data);
-
+ 
     const request = await fetch(url, _headers as RequestInit);
-
     // serializa la respuesta de la peticion
     const result = request.json();
     return result;

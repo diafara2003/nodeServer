@@ -14,33 +14,39 @@ export class Auth {
     private readonly NomUsuario: string;
     private readonly ClaveUsuario: string;
     public tokenMarco: Token | undefined;
-    public timeToken: Date | null;
+    public timeToken: number | null;
+    public FechaToken: Date | null;
+
     private user: string | undefined;
 
     constructor() {
 
-        this.NomUsuario = 'provportal';
-        this.ClaveUsuario = '+m8RuYOMNLGR1yvw0V+dJsTFuQT1BkUkNKXCSBQ6U9fZnRyTpsdg/YjlGFkDQGpIl7IctbC5LMPUexnG/hmkTVmEWC1+9gIR+iD8HqhBKUEgI0oOoJ+cetKxI+38rb57Apr6CfaAhLxFXdR+/fz1A414hEQ5zPCvxDqeLA/8gtHReMdqFxXNxu6j1i3DASDtrVMgMrOz3p0vDP4/Kqa79cOQSOFQrTq5Zjf0UYQRKqjyqz+7Up9Ghk6IIbYLXq8gz4cwrRVB81Iwx/NBNdAZ57ttM4JkkDCIk6b5Dfc0x7Q=6';
+        this.NomUsuario = 'admin';
+        this.ClaveUsuario = 'V7uc4n0545XCurLsiHeuvgFjdDm8zw7qMFLIoigoBpLD3oURj+YF02TRMcBC0F4aFkVq/HkA0vnjhSTOHeLfdjAZj81yboM/hVFymsLI7Ndj7EPVhZ8wOezbNXI6Fh7Sailttg2y096jeWQlozLaZp2IdUq3u+7ML6eFtCU6GyA+I2lo9Cjx89O/AW5SESOnlVX6ZFbnrnJm/1U71pj38uRRbuExb6WtOsuoyvleanQFu6PUOXYVxyoghIpd03XHuQjUcQWMuelWuOni/rDKIFNA9F3GWTL03FrTSFOJ4vJ9RqZew2R9dXqalR6u0Hzeg0q9zAeIC6WtGNZ1gy762/NW8AyCmcwcOXSECQExusEomTjTpJXmOTbZifXGA6sPEoIexXRoaYBlKKmqEeCh6zQ8mLPcxR88dgop60NZpYYLFwWyqE4DwB+fo4s5UeiX08xa9jQ6tNLCjE8Ey8ryb6YMM4ZbDPhN9gb1HNVOEPdkb9UOEW5M4gARWXt2u7SuCwAovPVFLaMHNEm8TTtBxiH/UEAFvJwtB/DnayTO8fo=8';
         this.tokenMarco = undefined;
         this.user = undefined;
-        this.timeToken = null
+        this.timeToken = null;
+        this.FechaToken=null;
     }
 
     generarToken = async () => {
-
+       
         try {
+        
             // 1.  se hace la autenticacion del usuario 
             let _pretoken = await Peticiones(`${envs.URL_RAIZ}/API/Auth/Usuario`, 'POST', { NomUsuario: this.NomUsuario, ClaveUsuario: this.ClaveUsuario }, false, false, '', '');
             // 2. se obtienen las empresas disponibles para el usuario por ambiente
-            let _empresas = await Peticiones(`${envs.URL_RAIZ}/API/Cliente/Empresas`, 'GET', undefined, true, false, _pretoken, '');
+            let _empresas = await Peticiones(`${envs.URL_RAIZ}/API/Cliente/Empresas`, 'GET', undefined, true, false, _pretoken, '');        
             // 3. se obtienen las sucursales disponibles por empresa seleccionada
-            let _sucursales = await Peticiones(`${envs.URL_RAIZ}/API/Cliente/1/Empresa/${_empresas[0].IdEmpresa}/Sucursales`, 'GET', undefined, true, false, _pretoken, '');
+            let _sucursales = await Peticiones(`${envs.URL_RAIZ}/API/Cliente/1/Empresa/1/Sucursales`, 'GET', undefined, true, false, _pretoken, '');      
             // 4. se obtienen el token final para realizar el cual se utiliza para realizar peticiones al api de ADPRO
-            let _token = await Peticiones(`${envs.URL_RAIZ}/API/Auth/Sesion/IniciarMovil/1/Empresa/${_empresas[0].IdEmpresa}/Sucursal/${_sucursales[0].Id}`, 'GET', undefined, true, false, _pretoken, '');
+            let _token = await Peticiones(`${envs.URL_RAIZ}/API/Auth/Sesion/IniciarMovil/1/Empresa/1/Sucursal/30`, 'GET', undefined, true, false, _pretoken, '');
 
+            console.log("token:",_token);
             this.user = _pretoken.data;
             this.tokenMarco = _token;
-            this.timeToken = new Date();
+            this.timeToken=_token.expires_in
+            this.FechaToken= new Date();
         }
         catch (error) {
             this.user = undefined;
@@ -63,22 +69,24 @@ export class Auth {
 
     calcularDiferenciaEnHoras = (fechaInicial: Date, fechaFinal: Date) => {
         const diferenciaEnMilisegundos: number = fechaFinal.getTime() - fechaInicial.getTime();
-        const diferenciaEnHoras: number = diferenciaEnMilisegundos / 3600000; // Convertir a horas
-        return diferenciaEnHoras;
+        const diferenciaEnSegundos: number = diferenciaEnMilisegundos / 1000;
+        return diferenciaEnSegundos;
     }
 
     validarToken = async (req: Request, res: Response,next: NextFunction) => {
-
         try {
+          
             if (this.tokenMarco === undefined) {
-                await this.generarToken()
+               
+                await this.generarToken();
+              
                 req.headers.authorization = this.tokenMarco!.access_token;
                 next();
             } else {
-                const horasToken = this.calcularDiferenciaEnHoras(this.timeToken!, new Date());
-                const tokenValido = horasToken < 24 && !this.hanCambiadoDeDia(this.timeToken!, new Date());
-                if (!tokenValido) await this.generarToken();
-                req.headers.authorization = this.tokenMarco?.access_token;
+                 const segundosTokenValido = this.calcularDiferenciaEnHoras(this.FechaToken!, new Date());
+                 if(segundosTokenValido>this.timeToken!)
+                    await this.generarToken()
+                    req.headers.authorization = this.tokenMarco?.access_token;
                 next();
 
             }

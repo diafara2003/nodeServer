@@ -30,6 +30,7 @@ export class Server{
 
         //*Public Folder
         //this.app.use(express.static('public'));
+
         this.app.use(bodyParser.json());
         this.app.use(cors());
 
