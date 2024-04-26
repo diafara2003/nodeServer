@@ -17,7 +17,6 @@ export async function Peticiones (
         method: type,
         headers: {
             'Content-Type': 'application/json',
-           
         }
     };
 
@@ -28,7 +27,7 @@ export async function Peticiones (
     if (data != undefined) _headers.body = JSON.stringify(data);
 
     const request = await fetch(url, _headers as RequestInit);
-
+    //console.log(request)
     // serializa la respuesta de la peticion
     const result = request.json();
     return result;

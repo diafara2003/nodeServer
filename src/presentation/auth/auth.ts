@@ -19,8 +19,8 @@ export class Auth {
 
     constructor() {
 
-        this.NomUsuario = 'provportal';
-        this.ClaveUsuario = '+m8RuYOMNLGR1yvw0V+dJsTFuQT1BkUkNKXCSBQ6U9fZnRyTpsdg/YjlGFkDQGpIl7IctbC5LMPUexnG/hmkTVmEWC1+9gIR+iD8HqhBKUEgI0oOoJ+cetKxI+38rb57Apr6CfaAhLxFXdR+/fz1A414hEQ5zPCvxDqeLA/8gtHReMdqFxXNxu6j1i3DASDtrVMgMrOz3p0vDP4/Kqa79cOQSOFQrTq5Zjf0UYQRKqjyqz+7Up9Ghk6IIbYLXq8gz4cwrRVB81Iwx/NBNdAZ57ttM4JkkDCIk6b5Dfc0x7Q=6';
+        this.NomUsuario = 'admin';
+        this.ClaveUsuario = 'KAcGHdFBpQq4qKxHXT/uqxbbLSOhh05u0hVc8Bfh/Zf0K12vKybDOUhOMJKhzokmg9G0nFuixUvM6RB3Upar5aHE6Pqc+GIBHSiReeU6h0E=3';
         this.tokenMarco = undefined;
         this.user = undefined;
         this.timeToken = null
