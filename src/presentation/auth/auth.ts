@@ -76,6 +76,7 @@ export class Auth {
     validarToken = async (req: Request, res: Response,next: NextFunction) => {
         try {
           
+           
             if (this.tokenMarco === undefined) {
                
                 await this.generarToken();

@@ -8,6 +8,8 @@ export class Controller {
 
     public getAll =  async (req:Request, res:Response) => {
 
+        console.log(req);
+
         const requestedPath = req.originalUrl;
         const requestedMethod = req.method;
         const requestBody = req.body;   
@@ -19,9 +21,10 @@ export class Controller {
       
         if(requestedPath=='/token'){
             res.send(token);
-    
+           
             return;
         }
+        // console.log(req.originalUrl);
         
         const response = await requestAPI({ 
             type: requestedMethod, 
@@ -31,6 +34,7 @@ export class Controller {
             responseType: attachmentRegex.test(disposition) ?'arraybuffer' : 'json'
         }, token)
       
+        
         if( attachmentRegex.test(disposition) ){
             res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
             res.setHeader('Content-Disposition', 'attachment; filename=archivo.xlsx');
