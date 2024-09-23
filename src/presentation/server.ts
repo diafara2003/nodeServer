@@ -30,13 +30,17 @@ export class Server{
 
         //*Public Folder
         //this.app.use(express.static('public'));
-        this.app.use(bodyParser.json());
+
+        this.app.use(bodyParser.json({ limit: '50mb' }));
+        this.app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+
+        // this.app.use(bodyParser.json());
         this.app.use(cors());
 
         const auth = new Auth();
 
         this.app.use(auth.validarToken);
-
+     
         // //*Routes
         this.app.use(this.routes);
        
