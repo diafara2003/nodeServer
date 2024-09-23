@@ -1,7 +1,7 @@
 import axios from "axios";
 import { envs } from "./config/envs";
 
-export async function requestAPI(request:any, token:string) {
+export async function requestAPI(request: any, token: string) {
 
     if (request.AllowAnonymous == null) request.AllowAnonymous = false;
     if (request.isformData == null) request.isformData = false;
@@ -14,12 +14,13 @@ export async function requestAPI(request:any, token:string) {
 
             Authorization: `Bearer ${token}`
         },
-        baseURL: envs.URL__BASE_API
+        baseURL: request.metodo.includes("core/api") ? envs.URL__BASE_API_CORE : envs.URL__BASE_API
     });
 
     let response = null;
 
     try {
+        console.log(`Request: ${envs.URL__BASE_API}${request.metodo}`);
         switch (request.type) {
 
             case "GET":

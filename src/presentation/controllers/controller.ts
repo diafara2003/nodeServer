@@ -28,7 +28,6 @@ export class Controller {
         
         const response = await requestAPI({ type: requestedMethod, metodo: requestedPath, data: requestBody }, token)
     
-        console.log(token);
     
         res.send(response);
     
