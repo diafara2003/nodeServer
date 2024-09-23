@@ -8,7 +8,7 @@ export class Controller {
 
     public getAll =  async (req:Request, res:Response) => {
 
-        console.log(req);
+      //  console.log(req);
 
         const requestedPath = req.originalUrl;
         const requestedMethod = req.method;
@@ -28,6 +28,7 @@ export class Controller {
         
         const response = await requestAPI({ type: requestedMethod, metodo: requestedPath, data: requestBody }, token)
     
+     
     
         res.send(response);
     

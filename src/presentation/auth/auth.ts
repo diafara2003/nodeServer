@@ -42,7 +42,7 @@ export class Auth {
             // 4. se obtienen el token final para realizar el cual se utiliza para realizar peticiones al api de ADPRO
             let _token = await Peticiones(`${envs.URL_RAIZ}/API/Auth/Sesion/IniciarMovil/1/Empresa/1/Sucursal/30`, 'GET', undefined, true, false, _pretoken, '');
 
-            console.log("token:",_token);
+          //  console.log("token:",_token);
             this.user = _pretoken.data;
             this.tokenMarco = _token;
             this.timeToken=_token.expires_in

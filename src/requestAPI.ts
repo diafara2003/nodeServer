@@ -1,6 +1,5 @@
-import axios, { AxiosResponse, AxiosError, ResponseType } from "axios";
+import axios, { AxiosResponse} from "axios";
 import { envs } from "./config/envs";
-import fs from 'fs';
 
 export async function requestAPI(request: any, token: string) {
 
@@ -18,10 +17,8 @@ export async function requestAPI(request: any, token: string) {
 
     let response: AxiosResponse | null = null;
 
-
-
     try {
-        console.log(`Request: ${envs.URL__BASE_API}${request.metodo}`);
+ // console.log(`Request: ${envs.URL__BASE_API}${request.metodo}`);
         switch (request.type) {
             case "GET":
                  response = await _http.get(request.metodo);
@@ -47,10 +44,10 @@ export async function requestAPI(request: any, token: string) {
                 break;
         }
     } catch (error) {
-        console.log(error);
+        console.log('error');
         response = null;
     }
     //console.log(response)
-    if (response != null) return response; 
+    if (response != null) return response.data; 
     else { return {}; }
 }
