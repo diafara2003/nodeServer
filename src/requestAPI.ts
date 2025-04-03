@@ -1,56 +1,80 @@
-import axios, { AxiosResponse } from "axios";
+import axios, { AxiosResponse, AxiosRequestConfig } from "axios";
 import { envs } from "./config/envs";
 
 export async function requestAPI(request: any, token: string) {
     const url = request.metodo.includes("core/api") ? envs.URL__BASE_API_CORE : envs.URL__BASE_API;
 
-    console.log(`ruta - ${url}`);
-    console.log(`ruta - ${url}${request.metodo} - metohd - ${request.type}`);
-
-    if (request.AllowAnonymous == null) request.AllowAnonymous = false;
-    if (request.isformData == null) request.isformData = false;
-
-    const _http = axios.create({
+    // Configuración especial para descargas
+    const isDownload = request.isDownload 
+    
+    const config: AxiosRequestConfig = {
+        baseURL: url,
         headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`
+            'Authorization': `Bearer ${token}`,
+            ...(isDownload ? {
+                'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            } : {
+                'Content-Type': request.isformData ? 'multipart/form-data' : 'application/json'
+            })
         },
-        baseURL: url
-    });
+        responseType: isDownload ? 'arraybuffer' : 'json'
+    };
 
-    let response: AxiosResponse | null = null;
-
+   
     try {
-        // console.log(`Request: ${envs.URL__BASE_API}${request.metodo}`);
+        let response: AxiosResponse;
+        
         switch (request.type) {
             case "GET":
-                response = await _http.get(request.metodo);
+                response = await axios.get(request.metodo, config);
                 break;
             case "DELETE":
-                response = await _http.delete(request.metodo);
+                response = await axios.delete(request.metodo, config);
                 break;
             case "POST":
-                if (request.data != null) {
-                    if (request.isformData)
-                        response = await _http.post(request.metodo, request.data);
-                    else
-                        response = await _http.post(request.metodo, JSON.stringify(request.data));
-                }
+                response = await axios.post(
+                    request.metodo, 
+                    request.isformData ? request.data : JSON.stringify(request.data),
+                    config
+                );
                 break;
             case "PUT":
-                if (request.data != null) {
-                    if (request.isformData)
-                        response = await _http.put(request.metodo, request.data);
-                    else
-                        response = await _http.put(request.metodo, JSON.stringify(request.data));
-                }
+                response = await axios.put(
+                    request.metodo,
+                    request.isformData ? request.data : JSON.stringify(request.data),
+                    config
+                );
                 break;
+            default:
+                throw new Error(`Método HTTP no soportado: ${request.type}`);
         }
-    } catch (error) {
-        console.log('error' + error);
-        response = null;
+
+        // Para descargas, devolver toda la respuesta
+        if (isDownload) {
+            return {
+                success: true,
+                data: response.data,
+                headers: {
+                    'content-type': response.headers['content-type'],
+                    'content-disposition': response.headers['content-disposition']
+                }
+            };
+        }
+        
+        return response.data;
+
+    } catch (error: any) {
+        console.error('Error en requestAPI:', error);
+        
+        if (error.response && isDownload) {
+            return {
+                error: true,
+                status: error.response.status,
+                data: error.response.data,
+                headers: error.response.headers
+            };
+        }
+        
+        throw error;
     }
-    //console.log(response)
-    if (response != null) return response.data;
-    else { return {}; }
 }
